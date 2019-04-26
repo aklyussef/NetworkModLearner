@@ -2,3 +2,6 @@ ignore.txt
 networkx_test.py
 __pycache__
 tags
+._.DS_Store
+.DS_Store
+.networkpython3
