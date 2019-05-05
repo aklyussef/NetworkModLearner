@@ -85,8 +85,8 @@ for file in io_h.get_files_in_dir(network_dir):
     print_network_characteristics(G)
     m = compute_metrics(G)
     print_metrics(m)
-    mod_gn          = compute_girvan_newman_community_metrics(G)
-    # mod_greedy      = compute_greedy_modularity_community_metrics(G)
+    #mod_gn          = compute_girvan_newman_community_metrics(G)
+    mod_greedy      = compute_greedy_modularity_community_metrics(G)
     line = [file, str(m['edge_node_r']), str(m['avg_clustering']), str(m['avg_mdc']), str(m['avg_degree']),
                          str(m['transitivity']), str(m['density']),str(mod_gn)]
     io_h.write_out_line(','.join(line))
