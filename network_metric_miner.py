@@ -25,7 +25,7 @@ def get_avg_degree(G):
 
 def compute_metrics(G):
     metrics = {}
-    metrics['edge_node_r']     = nx.number_of_edges(G)/nx.number_of_nodes(G)
+    metrics['edge_node_r']              = nx.number_of_edges(G)/nx.number_of_nodes(G)
     metrics['avg_clustering']           = nx.average_clustering(G)
     metrics['avg_mdc']                  = get_avg(nx.average_degree_connectivity(G))
     metrics['avg_degree']               = get_avg_degree(G)
