@@ -37,21 +37,22 @@ class DataVisualizer:
         plt.show()
         return
 
-    # TODO: Figure out why modularity isn't showing up in corelation matrix
+    # TODO: consider using _get_numeric_data().columns for x& y tick labels
     def plot_corelation_matrix(self):
-       correlations = self.df.corr()
-       fig = plt.figure()
-       ax = fig.add_subplot(111)
-       ax.set_title('feature correlations')
-       cax = ax.matshow(correlations,vmin=-1,vmax=1)
-       fig.colorbar(cax)
-       ticks = np.arange(0,len(self.labels),1)
-       ax.set_xticks(ticks)
-       ax.set_yticks(ticks)
-       ax.set_xticklabels(self.labels)
-       ax.set_yticklabels(self.labels)
-       plt.show()
-       return
+        df = self.df.iloc[:,1:]
+        correlations = df.corr()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.set_title('feature correlations')
+        cax = ax.matshow(correlations,vmin=-1,vmax=1)
+        fig.colorbar(cax)
+        ticks = np.arange(0,len(self.labels),1)
+        ax.set_xticks(ticks)
+        ax.set_yticks(ticks)
+        ax.set_xticklabels(self.labels[1:])
+        ax.set_yticklabels(self.labels[1:])
+        plt.show()
+        return
    
     def plot_scatterplot_matrix(self):
        scatter_matrix(self.df)
