@@ -51,6 +51,8 @@ def get_edge_tuples(fobj):
         if any(line.startswith(x) for x in comment_predecessors):
             continue
         nodes = line.split()
+        if(len(nodes) == 1):
+            nodes  = line.split(',')
         try:
             (node1,node2) = nodes[0],nodes[1]
         except:

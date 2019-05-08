@@ -132,13 +132,13 @@ class IOHelper:
             output_exists = True
         if not output_exists:
             self.outfile = open(self.out_file_path,self.write_mode)
-            self.outfile.writelines(headerstring)
+            self.outfile.writelines(headerstring+'\n')
             self.outfile.close()
         return
 
     def write_out_line(self,line):
         self.outfile = open(self.out_file_path,self.write_mode)
-        self.outfile.writelines(line)
+        self.outfile.writelines(line+'\n')
         self.outfile.close()
         return
 

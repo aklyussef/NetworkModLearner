@@ -139,8 +139,8 @@ mod_threshold = 0.6
 
 io_h = IOHelper(network_dir)
 io_h.writeOutputHeader('filename,edges_node_r,avg_clustering,avg_mdc,avg_degree,transitivity,density,c_centrality,b_centrality,modularity,label')
-networks = generate_networks()
-process_generated_networks(networks,io_h)
+#networks = generate_networks()
+#process_generated_networks(networks,io_h)
 process_network_files(io_h.get_files_in_dir(network_dir),io_h)
 
 print('script finished!')
