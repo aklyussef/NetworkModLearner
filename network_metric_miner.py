@@ -70,8 +70,8 @@ def generate_networks(io_h):
     list_of_networks    = {}
     n_nodes             = 1000
     n_edges             = 3
-    connection_probs    = np.arange(0.1,1,0.1)
-    multipliers         = np.arange(1,100,5)
+    connection_probs    = np.arange(0.3,1,0.1)
+    multipliers         = np.arange(50,100,5)
 
     processed_networks  = io_h.get_ignore_list()
 
@@ -102,14 +102,13 @@ def generate_networks(io_h):
             list_of_networks[n_name]       = nx.erdos_renyi_graph(n_nodes,con_prob)
         #gnm_random_graph requires number of edges so we will use prob * multiplier * number_of_nodes
         for multiplier in multipliers:
-            m_factor =  multiplier*con_prob
             #computed for each iteration
-            nodes = int(n_nodes * m_factor)
-            n_name = 'x'.join(['gnm_random_graph',str(nodes)])
+            m_factor =  multiplier*con_prob*n_nodes
+            n_name = 'x'.join(['gnm_random_graph',str(m_factor)])
             if n_name not in processed_networks:
                 print('Generating {}'.format(n_name))
                 n_edges = int(m_factor)
-                list_of_networks[n_name]        = nx.gnm_random_graph(nodes,n_edges)
+                list_of_networks[n_name]        = nx.gnm_random_graph(n_nodes,n_edges)
     print('Finished Generating Networks')
     return list_of_networks
 
