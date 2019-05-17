@@ -2,6 +2,7 @@ import sys
 
 import networkx as nx
 from networkx.algorithms import community
+import numpy as np
 import matplotlib.pyplot as plt
 
 
@@ -11,6 +12,9 @@ from IOHelper import IOHelper
 #Returns the average of dictionary values
 def get_avg(dict):
     return sum(dict.values())/len(dict)
+
+def get_weighted_avg(dict):
+    return sum(i[0]*i[1] for i in zip(dict.keys(),dict.values()))/len(dict)
 
 def get_avg_degree(G):
     deg = 0
@@ -26,8 +30,8 @@ def get_avg_degree(G):
 def compute_metrics(G):
     metrics = {}
     metrics['e_n_r']                    = nx.number_of_edges(G)/nx.number_of_nodes(G) #Edge to node ratio
-    metrics['av_clu']                     = nx.average_clustering(G)  #avg clustering
-    metrics['av_mdc']                   = get_avg(nx.average_degree_connectivity(G))
+    metrics['av_clu']                   = nx.average_clustering(G)  #avg clustering
+    metrics['av_mdc']                   = get_weighted_avg(nx.average_degree_connectivity(G))
     metrics['av_deg']                   = get_avg_degree(G) #avg_degree
     metrics['tran']                     = nx.transitivity(G) # transitivity
     metrics['den']                      = nx.density(G)
@@ -61,34 +65,51 @@ def get_class(modularity,threshold):
     label = '1' if modularity >= threshold else '0'
     return label
 
-def generate_networks():
+def generate_networks(io_h):
     # Dictionary for storing networks with names for dataset
     list_of_networks    = {}
-    n_nodes = 1000
-    n_edges = 3
-    connection_probs     = [0.1,0.3,0.5,0.7]
+    n_nodes             = 1000
+    n_edges             = 3
+    connection_probs    = np.arange(0.1,1,0.1)
+    multipliers         = np.arange(1,100,5)
+
+    processed_networks  = io_h.get_ignore_list()
 
     print('Generating Famous social networks')
     # Append famous social networks to list
-    list_of_networks['kartae_club']                 = nx.karate_club_graph()
-    list_of_networks['davis_southern_women_graph']  = nx.davis_southern_women_graph()
-    list_of_networks['florentine_families_graph']   = nx.florentine_families_graph()
+    n_name = 'kartae_club'
+    if n_name not in processed_networks:
+        list_of_networks[n_name]  = nx.karate_club_graph()
+    n_name = 'davis_southern_women_graph'
+    if n_name not in processed_networks:
+        list_of_networks[n_name]  = nx.davis_southern_women_graph()
+    n_name = 'florentine_families_graph'
+    if n_name not in processed_networks:
+        list_of_networks[n_name]   = nx.florentine_families_graph()
 
     print('Generating Barabasi network')
     # Append Barabasi Graph
-    list_of_networks['barabasi_albert_graph']       = nx.barabasi_albert_graph(n_nodes,n_edges)
+    n_name = 'barabasi_albert_graph'
+    if n_name not in processed_networks:
+        list_of_networks[n_name]  = nx.barabasi_albert_graph(n_nodes,n_edges)
 
     print('Generating Random Networks')
     # Generate random networks with connection probabilities
     for con_prob in connection_probs:
-        graph_name = '_'.join(['erdos_renyi_graph',str(con_prob)])
-        print('Generating {}'.format(graph_name))
-        list_of_networks[graph_name]       = nx.erdos_renyi_graph(n_nodes,con_prob)
-        #gnm_random_graph requires number of edges so we will use prob * 100 * number_of_nodes
-        graph_name = 'x'.join(['gnm_random_graph',str(n_nodes),str(con_prob*100)])
-        print('Generating {}'.format(graph_name))
-        n_edges = int(con_prob*n_nodes*100)
-        list_of_networks[graph_name]        = nx.gnm_random_graph(n_nodes,n_edges)
+        n_name = '_'.join(['erdos_renyi_graph', '{:.1f}'.format(con_prob)])
+        if n_name not in processed_networks:
+            print('Generating {}'.format(n_name))
+            list_of_networks[n_name]       = nx.erdos_renyi_graph(n_nodes,con_prob)
+        #gnm_random_graph requires number of edges so we will use prob * multiplier * number_of_nodes
+        for multiplier in multipliers:
+            m_factor =  multiplier*con_prob
+            #computed for each iteration
+            nodes = int(n_nodes * m_factor)
+            n_name = 'x'.join(['gnm_random_graph',str(nodes)])
+            if n_name not in processed_networks:
+                print('Generating {}'.format(n_name))
+                n_edges = int(m_factor)
+                list_of_networks[n_name]        = nx.gnm_random_graph(nodes,n_edges)
     print('Finished Generating Networks')
     return list_of_networks
 
@@ -139,8 +160,8 @@ mod_threshold = 0.6
 
 io_h = IOHelper(network_dir)
 io_h.writeOutputHeader('filename,edges_node_r,avg_clustering,avg_mdc,avg_degree,transitivity,density,c_centrality,b_centrality,modularity,label')
-#networks = generate_networks()
-#process_generated_networks(networks,io_h)
+networks = generate_networks(io_h)
+process_generated_networks(networks,io_h)
 process_network_files(io_h.get_files_in_dir(network_dir),io_h)
 
 print('script finished!')

@@ -56,7 +56,6 @@ class IOHelper:
             ignore_list.append(path_split[-1])
         return ignore_list
 
-
     # Get ignore networks from ignore file if it exists
     #TODO: LOAD FROM OUTPUT FILE
     def load_ignore_list(self):
@@ -66,6 +65,9 @@ class IOHelper:
         else:
             print('ignoring {}'.format(','.join(x for x in self.ignore_list)))
         return
+
+    def get_ignore_list(self):
+        return self.ignore_list
 
     def locate_additional_ignores(self):
         tracker = []
@@ -84,26 +86,6 @@ class IOHelper:
             return
         print('no additional ignores found')
         return
-
-
-    #TODO: modify function to read newtork using correct loading function
-    def get_network_from_file(self,filepath):
-        print("Reading repo input file: {}".format(filepath))
-        repolist = []
-        if ( not os.path.exists(filepath)):
-            print("File {} doesn't exist".format(filepath))
-            exit(1)
-        file = open(filepath,'r')
-        filelines = file.readlines()
-        for line in filelines:
-            line = line.strip()
-            if line.startswith('http') and line.endswith('.git'):
-                if line not in repolist:
-                    repolist.append(line)
-            else:
-                print("{} does not look like a repo...please check for next run".format(line))
-        file.close()
-        return repolist
 
     def getCurrentDirectory(self):
         return self.dir

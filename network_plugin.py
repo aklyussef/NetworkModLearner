@@ -6,7 +6,6 @@ def _open_gz(path, mode):
     import gzip
     return gzip.open(path, mode=mode)
 
-
 def _open_bz2(path, mode):
     import bz2
     return bz2.BZ2File(path, mode=mode)
