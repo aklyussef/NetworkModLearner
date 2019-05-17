@@ -140,6 +140,8 @@ def process_generated_networks(network_d,io_handler):
 def mine_graph(name,G,io_handler):
     print('mining graph {}'.format(name))
     print_network_characteristics(G)
+    if nx.number_of_nodes(G) == 0 or nx.number_of_edges(G) == 0:
+        return
     m = compute_metrics(G)
     print_metrics(m)
     mod_greedy = compute_greedy_modularity_community_metrics(G)
