@@ -23,6 +23,7 @@ def is_string(tstr):
     return isinstance(tstr,str)
 
 comment_predecessors = ['*','#']
+
 def read_file(filepath):
     """ This function reads network files
     Parameters

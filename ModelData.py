@@ -17,8 +17,6 @@ from sklearn.svm import SVC
 
 class ModelData:
 
-    #TODO: Figure out how to change data into binary classification problem using threshold since this class only handles bianry/multiclass classification
-
     def __init__(self,filepath,threshold):
         self.dataset = pandas.read_csv(filepath)
         self.dataset = self.dataset._get_numeric_data()
@@ -27,6 +25,7 @@ class ModelData:
         self.threshold = threshold
         #Splits variable for k-fold cross validation
         self.splits = 5
+        return
 
         #create classification labeled dataframe
         self.l_dataset  = self.get_labeled_df(self.threshold,self.labels[-1])
@@ -86,8 +85,7 @@ class ModelData:
             print(name+' accuracy score: ' + str(accuracy_score(Y_validation, predictions)))
             print(confusion_matrix(Y_validation, predictions))
             print(classification_report(Y_validation, predictions))
-
-
+        return
 
     def show_comparison(self):
         fig = plt.figure()

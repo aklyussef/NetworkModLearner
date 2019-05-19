@@ -59,7 +59,7 @@ class DataVisualizer:
         col_ctr = 0
         row_ctr = 0
         fig, axs  = plt.subplots(n_rows,n_col,figsize=(5,10))
-        for label in self.labels[1:-1]:
+        for label in labels:
             if kind == 'scatter':
                 self.numeric_data.plot(kind=kind, x=label, y=out_label, ax=axs[row_ctr][col_ctr])
             elif kind == 'box':
