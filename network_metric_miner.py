@@ -4,6 +4,7 @@ import networkx as nx
 from networkx.algorithms import community
 import numpy as np
 import matplotlib.pyplot as plt
+import community as louvain_community
 
 
 from network_plugin import read_file,get_edge_tuples
@@ -47,6 +48,15 @@ def compute_greedy_modularity_community_metrics(G):
     print('There were {} communities found.'.format(len(greedy_community)))
     modularity = community.modularity(G,greedy_community)
     print('Graph modularity based on Clauset-Newman-Moore greedy modularity maximization clustering is: {}'.format(modularity))
+    return modularity
+
+def compute_louvain_community_metrics(G):
+    #starts with every node being a community and combines nodes to maximize modularity, stops when modularity no longer increases
+    modularity = 0
+    part = louvain_community.best_partition(G) 
+    print('There were {} communities found.'.format(len(set(part.values()))))
+    modularity = louvain_community.modularity(part,G)
+    print('Graph modularity based on the louvain method is: {}'.format(modularity))
     return modularity
 
 # the more I apply next the more new communities appear
@@ -143,10 +153,11 @@ def mine_graph(name,G,io_handler):
         return
     m = compute_metrics(G)
     print_metrics(m)
-    mod_greedy = compute_greedy_modularity_community_metrics(G)
-    mod_class = get_class(mod_greedy, mod_threshold)
+    #mod = compute_greedy_modularity_community_metrics(G)
+    mod = compute_louvain_community_metrics(G)
+    #mod_class = get_class(mod_greedy, mod_threshold)
     line = [name, str(m['e_n_r']), str(m['av_clu']), str(m['av_mdc']), str(m['av_deg']),
-            str(m['tran']), str(m['den']), str(m['c_cen']), str(m['b_cen']), str(mod_greedy), mod_class]
+            str(m['tran']), str(m['den']), str(m['c_cen']), str(m['b_cen']), str(mod)]
     io_handler.write_out_line(','.join(line))
 
 filepath = r"/Users/aklyussef/Google Drive/School/Grad/Courses/Semester2/Optimization/Project/collab_network/data/jazz.net"
@@ -160,7 +171,7 @@ network_dir = sys.argv[1]
 mod_threshold = 0.6
 
 io_h = IOHelper(network_dir)
-io_h.writeOutputHeader('filename,edges_node_r,avg_clustering,avg_mdc,avg_degree,transitivity,density,c_centrality,b_centrality,modularity,label')
+io_h.writeOutputHeader('filename,edges_node_r,avg_clustering,avg_mdc,avg_degree,transitivity,density,c_centrality,b_centrality,modularity')
 networks = generate_networks(io_h)
 process_generated_networks(networks,io_h)
 process_network_files(io_h.get_files_in_dir(network_dir),io_h)
