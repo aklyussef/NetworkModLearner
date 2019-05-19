@@ -97,7 +97,6 @@ class ModelData:
         ax.set_xticklabels(self.names)
         plt.show()
 
-
 def main():
     md = ModelData('../network_summary.csv',0.3)
     md.show_data_features()
