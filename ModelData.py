@@ -19,28 +19,43 @@ class ModelData:
 
     #TODO: Figure out how to change data into binary classification problem using threshold since this class only handles bianry/multiclass classification
 
-    def __init__(self,filepath):
+    def __init__(self,filepath,threshold):
         self.dataset = pandas.read_csv(filepath)
+        self.dataset = self.dataset._get_numeric_data()
         self.labels = list(self.dataset.columns)
         #TODO: Accept splits from ModelData constructor
-        self.splits = 2
+        self.threshold = threshold
+        #Splits variable for k-fold cross validation
+        self.splits = 5
+
+        #create classification labeled dataframe
+        self.l_dataset  = self.get_labeled_df(self.threshold,self.labels[-1])
+        self.c_labels   = list(self.l_dataset.columns)
         return
 
+    def get_labeled_df(self,cutoff,label):
+        rdf = self.dataset.copy()
+        rdf['class'] = rdf.apply(lambda row: 1 if row[label] >= cutoff else 0, axis=1)
+        rdf.drop(label,axis=1,inplace=True)
+        return rdf
+
     def show_data_features(self):
+        dataset = self.l_dataset
         #shape
-        print(self.dataset.shape)
+        print(dataset.shape)
         #head
-        print(self.dataset.head(20))
+        print(dataset.head(20))
         #statistical info on dataset
-        print(self.dataset.describe())
+        print(dataset.describe())
         #class distribution
-        print(self.dataset.groupby(self.labels[-1]).size())
+        print(dataset.groupby('class').size())
         return
 
     def fit_and_evaluate(self):
-        array = self.dataset.values
-        X = array[:,1:len(self.labels)-1]
-        Y = array[:,len(self.labels)-1]
+        dataset = self.l_dataset
+        array = dataset.values
+        X = array[:,1:len(self.c_labels)-1]
+        Y = array[:,len(self.c_labels)-1]
         validation_size = 0.20
         seed = 7
         X_train, X_validation, Y_train, Y_validation = model_selection.train_test_split(X, Y, test_size=validation_size,
@@ -63,30 +78,30 @@ class ModelData:
             self.results.append(cv_results)
             self.names.append(name)
             msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+            print(msg)
+
+        for name,model in self.models:
+            model.fit(X_train, Y_train)
+            predictions = model.predict(X_validation)
+            print(name+' accuracy score: ' + str(accuracy_score(Y_validation, predictions)))
+            print(confusion_matrix(Y_validation, predictions))
+            print(classification_report(Y_validation, predictions))
 
 
-        def show_comparison(self):
-            fig = plt.figure()
-            fig.suptitle('Algorithm Comparison')
-            ax = fig.add_subplot(111)
-            plt.boxplot(self.results)
-            ax.set_xticklabels(self.names)
-            plt.show()
+
+    def show_comparison(self):
+        fig = plt.figure()
+        fig.suptitle('Algorithm Comparison')
+        ax = fig.add_subplot(111)
+        plt.boxplot(self.results)
+        ax.set_xticklabels(self.names)
+        plt.show()
 
 
 def main():
-    md = ModelData('../data/output/network_summary.csv')
+    md = ModelData('../network_summary.csv',0.3)
     md.show_data_features()
     md.fit_and_evaluate()
 
 if __name__ == '__main__':
     main()
-
-def to_be_integrated():
-	# Make predictions on validation dataset
-	knn = KNeighborsClassifier()
-	knn.fit(X_train, Y_train)
-	predictions = knn.predict(X_validation)
-	print(accuracy_score(Y_validation, predictions))
-	print(confusion_matrix(Y_validation, predictions))
-	print(classification_report(Y_validation, predictions))
