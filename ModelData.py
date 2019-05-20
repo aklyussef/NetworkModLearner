@@ -1,4 +1,5 @@
 import os
+import sys
 #Load librariestry:
 import pandas
 import numpy as np
@@ -25,7 +26,6 @@ class ModelData:
         self.threshold = threshold
         #Splits variable for k-fold cross validation
         self.splits = 5
-        return
 
         #create classification labeled dataframe
         self.l_dataset  = self.get_labeled_df(self.threshold,self.labels[-1])
@@ -39,6 +39,8 @@ class ModelData:
         return rdf
 
     def show_data_features(self):
+        #Show original dataset head
+        print(self.dataset.head()) 
         dataset = self.l_dataset
         #shape
         print(dataset.shape)
@@ -96,9 +98,17 @@ class ModelData:
         plt.show()
 
 def main():
-    md = ModelData('../network_summary.csv',0.3)
+    if len(sys.argv) != 3:
+        print('USAGE {} PATH_TO_DATASET CUTOFF'.format(sys.argv[0]))
+        exit(1)
+    filepath = sys.argv[1]
+    cutoff = float(sys.argv[2])
+    print('Reading dataset: ',filepath )
+    print('Using cutoff: ',cutoff)
+    md = ModelData(filepath,cutoff)
     md.show_data_features()
     md.fit_and_evaluate()
+    md.show_comparison()
 
 if __name__ == '__main__':
     main()
