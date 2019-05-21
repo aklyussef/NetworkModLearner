@@ -114,7 +114,7 @@ def generate_networks(io_h):
         for multiplier in multipliers:
             #computed for each iteration
             m_factor =  multiplier*con_prob*n_nodes
-            n_name = 'x'.join(['gnm_random_graph',str(m_factor)])
+            n_name = 'x'.join(['gnm_random_graph','{:.1f}'.format(m_factor)])
             if n_name not in processed_networks:
                 print('Generating {}'.format(n_name))
                 n_edges = int(m_factor)
