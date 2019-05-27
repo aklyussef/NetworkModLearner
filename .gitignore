@@ -1,3 +1,4 @@
+*.log
 ignore.txt
 networkx_test.py
 __pycache__
