@@ -156,15 +156,32 @@ def compare_algos_thresholds(filename):
             line = line.replace('(','')
             line = line.replace(')','')
             parts = line.split(',')
-            accuracy = parts[1]
+            accuracy = float(parts[1])
             threshold_metrics[threshold][0].append(accuracy)
-            recall  = parts[3]
+            recall  = float(parts[3])
             threshold_metrics[threshold][1].append(recall)
-            f1  = parts[5]
+            f1  = float(parts[5])
             threshold_metrics[threshold][2].append(f1)
-    fig = plt.figure()
-    fig.suptitle('Algorithm Performance Plot')
-    ax = fig.add_subplot(111)
+    fig, axs  = plt.subplots(3,3,figsize=(5,8))
+    row_ctr = 0
+    col_ctr = 0
+    for threshold in threshold_metrics.keys():
+        axs[col_ctr][row_ctr].plot(models, threshold_metrics[threshold][0],'r',label='accuracy',marker='o', linewidth = 3, alpha= 0.8)
+        axs[col_ctr][row_ctr].plot(models, threshold_metrics[threshold][1],'b',label='recall',marker='x',linestyle='--',  linewidth = 3 ,alpha= 0.8)
+        axs[col_ctr][row_ctr].plot(models, threshold_metrics[threshold][2],'g',label='f1',marker='<',linestyle=':',  linewidth = 3, alpha= 0.8)
+        #axs[2][1].legend()
+        fontsize = 10
+        axs[col_ctr][row_ctr].set_title('Threshold {}'.format(threshold),fontsize=fontsize)
+        axs[col_ctr][row_ctr].set_ylabel('Percentage')
+        axs[col_ctr][row_ctr].tick_params(labelsize=fontsize)
+        row_ctr = (row_ctr + 1) % 3
+        if (row_ctr == 0):
+            col_ctr = (col_ctr + 1) % 3
+    axs[1][1].legend(loc='lower center', bbox_to_anchor=(0.2, -1), ncol=1)
+    plt.setp(axs[2][1].axis("off"))
+    plt.setp(axs[2][2].axis("off"))
+    plt.show()
+
     return
 
 def main():
