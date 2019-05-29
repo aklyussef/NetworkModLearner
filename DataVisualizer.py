@@ -106,7 +106,7 @@ class DataVisualizer:
 
 def main():
     # dv = DataVisualizer('../data/output/network_summary.csv')
-    dv = DataVisualizer('../network_summary.csv')
+    dv = DataVisualizer('../data/output/network_summary.csv')
     dv.dataframe_summary()
 
     dv.build_plots()

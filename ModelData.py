@@ -169,6 +169,7 @@ def compare_algos_thresholds(filename):
         axs[col_ctr][row_ctr].plot(models, threshold_metrics[threshold][0],'r',label='accuracy',marker='o', linewidth = 3, alpha= 0.8)
         axs[col_ctr][row_ctr].plot(models, threshold_metrics[threshold][1],'b',label='recall',marker='x',linestyle='--',  linewidth = 3 ,alpha= 0.8)
         axs[col_ctr][row_ctr].plot(models, threshold_metrics[threshold][2],'g',label='f1',marker='<',linestyle=':',  linewidth = 3, alpha= 0.8)
+        # axs[col_ctr][row_ctr].set_ylim(ymin=0)
         #axs[2][1].legend()
         fontsize = 10
         axs[col_ctr][row_ctr].set_title('Threshold {}'.format(threshold),fontsize=fontsize)
@@ -177,11 +178,11 @@ def compare_algos_thresholds(filename):
         row_ctr = (row_ctr + 1) % 3
         if (row_ctr == 0):
             col_ctr = (col_ctr + 1) % 3
-    axs[1][1].legend(loc='lower center', bbox_to_anchor=(0.2, -1), ncol=1)
-    plt.setp(axs[2][1].axis("off"))
+    axs[1][1].legend(loc='lower center', bbox_to_anchor=(1.3, -1), ncol=1)
+    # plt.setp(axs[2][1].axis("off"))
     plt.setp(axs[2][2].axis("off"))
     plt.show()
-
+    # plt.subplots_adjust(left=0.7,bottom=0.7,right=0.97,top=0.94,wspace=0.19,hspace=0.20)
     return
 
 def main():
@@ -191,7 +192,7 @@ def main():
     filepath = sys.argv[1]
     # cutoff = float(sys.argv[2])
     l = init_logger()
-    cutoffs = np.arange(0.1,1,0.1)
+    cutoffs = np.arange(0.1,0.9,0.1)
     for cutoff in cutoffs:
         l.debug('Reading dataset: ',filepath )
         print('Reading dataset: ',filepath )

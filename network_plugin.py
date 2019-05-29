@@ -45,6 +45,7 @@ def read_file(filepath):
 def get_edge_tuples(fobj):
     edge_tuples = []
     linelist = fobj.readlines()
+    fobj.close()
     for line in linelist:
         if(isinstance(line,bytes)):
             line = line.decode("utf-8")
