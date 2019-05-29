@@ -79,9 +79,8 @@ def generate_networks(io_h):
     # Dictionary for storing networks with names for dataset
     list_of_networks    = {}
     n_nodes             = 1000
-    n_edges             = 3
-    connection_probs    = np.arange(0.3,1,0.1)
-    multipliers         = np.arange(50,100,5)
+    n_edges             = np.arange(1,5,1)
+    connection_probs    = np.arange(0.5,0.7,0.1)
 
     processed_networks  = io_h.get_ignore_list()
 
@@ -98,10 +97,12 @@ def generate_networks(io_h):
         list_of_networks[n_name]   = nx.florentine_families_graph()
 
     print('Generating Barabasi network')
-    # Append Barabasi Graph
-    n_name = 'barabasi_albert_graph'
-    if n_name not in processed_networks:
-        list_of_networks[n_name]  = nx.barabasi_albert_graph(n_nodes,n_edges)
+    for connection in n_edges:
+        # Append Barabasi Graph
+        n_name = '_'.join(['barabasi_albert_graph',str(connection)])
+        if n_name not in processed_networks:
+            print('Generating ', n_name)
+            list_of_networks[n_name]  = nx.barabasi_albert_graph(n_nodes,connection)
 
     print('Generating Random Networks')
     # Generate random networks with connection probabilities
@@ -110,15 +111,6 @@ def generate_networks(io_h):
         if n_name not in processed_networks:
             print('Generating {}'.format(n_name))
             list_of_networks[n_name]       = nx.erdos_renyi_graph(n_nodes,con_prob)
-        #gnm_random_graph requires number of edges so we will use prob * multiplier * number_of_nodes
-        for multiplier in multipliers:
-            #computed for each iteration
-            m_factor =  multiplier*con_prob*n_nodes
-            n_name = 'x'.join(['gnm_random_graph','{:.1f}'.format(m_factor)])
-            if n_name not in processed_networks:
-                print('Generating {}'.format(n_name))
-                n_edges = int(m_factor)
-                list_of_networks[n_name]        = nx.gnm_random_graph(n_nodes,n_edges)
     print('Finished Generating Networks')
     return list_of_networks
 
